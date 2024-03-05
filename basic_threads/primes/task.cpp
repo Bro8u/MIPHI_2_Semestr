@@ -44,6 +44,7 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
     * а также времени, проведенного в секции кода под локом
     */
 void PrimeNumbersSet::AddPrimesInRange(uint64_t from, uint64_t to) {
+    
     auto start = std::chrono::steady_clock::now(); // Начало измерения времени
     std::unique_lock<std::shared_mutex> lock(set_mutex_);
     auto end = std::chrono::steady_clock::now(); // Мьютекс захвачен, фиксируем время

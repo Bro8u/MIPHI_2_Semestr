@@ -5,6 +5,8 @@
 #include <set>
 #include <atomic>
 #include <shared_mutex>
+#include <stdexcept>
+#include <vector>
 
 /*
  * Класс PrimeNumbersSet -- множество простых чисел в каком-то диапазоне
