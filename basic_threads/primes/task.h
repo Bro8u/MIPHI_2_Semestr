@@ -4,6 +4,7 @@
 #include <mutex>
 #include <set>
 #include <atomic>
+#include <shared_mutex>
 
 /*
  * Класс PrimeNumbersSet -- множество простых чисел в каком-то диапазоне
@@ -18,6 +19,7 @@ public:
     // Получить следующее по величине простое число из множества
     uint64_t GetNextPrime(uint64_t number) const;
 
+    bool Prime(uint64_t number) const;
     /*
      * Найти простые числа в диапазоне [from, to) и добавить в множество
      * Во время работы этой функции нужно вести учет времени, затраченного на ожидание лока мюьтекса,
@@ -38,6 +40,6 @@ public:
     std::chrono::nanoseconds GetTotalTimeUnderMutex() const;
 private:
     std::set<uint64_t> primes_;
-    mutable std::mutex set_mutex_;
+    mutable std::shared_mutex set_mutex_;
     std::atomic<uint64_t> nanoseconds_under_mutex_, nanoseconds_waiting_mutex_;
 };
