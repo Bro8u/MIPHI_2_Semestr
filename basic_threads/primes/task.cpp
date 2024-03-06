@@ -29,6 +29,11 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
         return false;
     }
     int k = 2;
+    int flag = 1;
+    for (int i = 0; i < 1000; ++i) {
+        flag++;
+        flag %= 2;
+    }
     while (k * k <= number) {
         if (number % k == 0) {
             return false;
@@ -44,21 +49,23 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
     * а также времени, проведенного в секции кода под локом
     */
 void PrimeNumbersSet::AddPrimesInRange(uint64_t from, uint64_t to) {
-    
-    auto start = std::chrono::steady_clock::now(); // Начало измерения времени
-    std::unique_lock<std::shared_mutex> lock(set_mutex_);
-    auto end = std::chrono::steady_clock::now(); // Мьютекс захвачен, фиксируем время
-    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    nanoseconds_waiting_mutex_ += elapsed;
+
     for (auto v = from; v < to; ++v) {
         if (Prime(v)) {
+            auto start = std::chrono::steady_clock::now(); // Начало измерения времени
+            std::unique_lock<std::shared_mutex> lock(set_mutex_);
+            auto end = std::chrono::steady_clock::now(); // Мьютекс захвачен, фиксируем время
+            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+            nanoseconds_waiting_mutex_ += elapsed;
             primes_.insert(v);
+            lock.unlock();
+            auto endend = std::chrono::steady_clock::now(); // Мьютекс отпущен, фиксируем время
+            auto elapsedelapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(endend - end).count();
+            nanoseconds_under_mutex_ += elapsedelapsed;
         }
     }
-    lock.unlock();
-    auto endend = std::chrono::steady_clock::now(); // Мьютекс отпущен, фиксируем время
-    auto elapsedelapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(endend - end).count();
-    nanoseconds_under_mutex_ += elapsedelapsed;
+    
+
 }
 
 // Посчитать количество простых чисел в диапазоне [from, to)
@@ -74,6 +81,9 @@ size_t PrimeNumbersSet::GetPrimesCountInRange(uint64_t from, uint64_t to) const 
 // Получить наибольшее простое число из множества
 uint64_t PrimeNumbersSet::GetMaxPrimeNumber() const {
     std::shared_lock<std::shared_mutex> lock(set_mutex_);
+    if (primes_.size() == 0) {
+        return 1;
+    }
     return *(--primes_.end());
 }
 
