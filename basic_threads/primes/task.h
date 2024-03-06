@@ -7,6 +7,7 @@
 #include <shared_mutex>
 #include <stdexcept>
 #include <vector>
+#include <random>
 
 /*
  * Класс PrimeNumbersSet -- множество простых чисел в каком-то диапазоне

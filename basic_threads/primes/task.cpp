@@ -30,10 +30,19 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
     }
     int k = 2;
     int flag = 1;
-    for (int i = 0; i < 1000; ++i) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> size_dist(1, 2); // Adjust range as needed
+    int size = size_dist(gen);
+    for (size_t i = 0; i < size; ++i) {
         flag++;
         flag %= 2;
     }
+
+    // for (int i = 0; i < 1000; ++i) {
+    //     flag++;
+    //     flag %= 2;
+    // }
     while (k * k <= number) {
         if (number % k == 0) {
             return false;
