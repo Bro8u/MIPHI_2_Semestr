@@ -73,10 +73,8 @@ void PrimeNumbersSet::AddPrimesInRange(uint64_t from, uint64_t to) {
             nanoseconds_under_mutex_ += elapsedelapsed;
         }
     }
-    
-
 }
-
+// extra to push
 // Посчитать количество простых чисел в диапазоне [from, to)
 size_t PrimeNumbersSet::GetPrimesCountInRange(uint64_t from, uint64_t to) const {
     std::shared_lock<std::shared_mutex> lock(set_mutex_);
