@@ -25,16 +25,13 @@ uint64_t PrimeNumbersSet::GetNextPrime(uint64_t number) const {
     return *next;
 }
 
-bool PrimeNumbersSet::Prime(uint64_t number) const {
+bool PrimeNumbersSet::Prime(uint64_t number, size_t size) const {
     if (number == 0 || number == 1) {
         return false;
     }
     int k = 2;
     int flag = 1;
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> size_dist(1, 2); // Adjust range as needed
-    size_t size = size_dist(gen);
+    
     for (size_t i = 0; i < size; ++i) {
         flag++;
         flag %= 2;
@@ -59,9 +56,15 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
     * а также времени, проведенного в секции кода под локом
     */
 void PrimeNumbersSet::AddPrimesInRange(uint64_t from, uint64_t to) {
-
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> size_dist(800, 801); // Adjust range as needed
+    size_t size = size_dist(gen);
     for (auto v = from; v < to; ++v) {
-        if (Prime(v)) {
+        // if (size < 1750) {
+        //     size = size_dist(gen);
+        // }
+        if (Prime(v, size)) {
             auto start = std::chrono::steady_clock::now(); // Начало измерения времени
             std::unique_lock<std::shared_mutex> lock(set_mutex_);
             auto end = std::chrono::steady_clock::now(); // Мьютекс захвачен, фиксируем время

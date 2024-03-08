@@ -22,7 +22,7 @@ public:
     // Получить следующее по величине простое число из множества
     uint64_t GetNextPrime(uint64_t number) const;
 
-    bool Prime(uint64_t number) const;
+    bool Prime(uint64_t number, size_t size) const;
     /*
      * Найти простые числа в диапазоне [from, to) и добавить в множество
      * Во время работы этой функции нужно вести учет времени, затраченного на ожидание лока мюьтекса,
