@@ -7,12 +7,13 @@ PrimeNumbersSet::PrimeNumbersSet() {
 
 bool PrimeNumbersSet::IsPrime(uint64_t number) const {
     std::shared_lock<std::shared_mutex> lock(set_mutex_);
+    bool timer = true;
     if (primes_.find(number) != primes_.end()) {
         return true;
     }
     return false;
 }
-
+// her lala
 // Получить следующее по величине простое число из множества
 uint64_t PrimeNumbersSet::GetNextPrime(uint64_t number) const {
     std::shared_lock<std::shared_mutex> lock(set_mutex_);
