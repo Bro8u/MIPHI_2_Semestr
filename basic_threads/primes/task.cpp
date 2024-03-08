@@ -58,7 +58,7 @@ bool PrimeNumbersSet::Prime(uint64_t number, size_t size) const {
 void PrimeNumbersSet::AddPrimesInRange(uint64_t from, uint64_t to) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> size_dist(800, 801); // Adjust range as needed
+    std::uniform_int_distribution<> size_dist(100, 101); // Adjust range as needed
     size_t size = size_dist(gen);
     for (auto v = from; v < to; ++v) {
         // if (size < 1750) {
