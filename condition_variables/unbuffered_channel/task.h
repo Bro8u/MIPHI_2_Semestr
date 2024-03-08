@@ -13,13 +13,8 @@ class TimeOut : public std::exception {
 template<typename T>
 class UnbufferedChannel {
 public:
-    void Put(const T& data) {
-        
-    }
-
-    T Get(std::chrono::milliseconds timeout = std::chrono::milliseconds(0)) {
-
-    }
+    void Put(const T& data);
+    T Get(std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
 private:
     std::mutex mtx;
     std::condition_variable put_cv, get_cv;
