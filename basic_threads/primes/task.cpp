@@ -7,7 +7,7 @@ PrimeNumbersSet::PrimeNumbersSet() {
 
 bool PrimeNumbersSet::IsPrime(uint64_t number) const {
     std::shared_lock<std::shared_mutex> lock(set_mutex_);
-    bool timer = true;
+    
     if (primes_.find(number) != primes_.end()) {
         return true;
     }
@@ -34,7 +34,7 @@ bool PrimeNumbersSet::Prime(uint64_t number) const {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> size_dist(1, 2); // Adjust range as needed
-    int size = size_dist(gen);
+    size_t size = size_dist(gen);
     for (size_t i = 0; i < size; ++i) {
         flag++;
         flag %= 2;
