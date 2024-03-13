@@ -33,7 +33,7 @@ void FirstProcessorThread(UnbufferedChannel<int>& sourceValuesChannel, Unbuffere
         }
     } catch (const TimeOut& ex) {
         std::lock_guard<std::mutex> lock(globalMutex);
-        std::cout << "Thread " << std::this_thread::get_id() << " cannot read data from the source values channel" << std::endl;
+        std::cout << "Thread1 " << std::this_thread::get_id() << " cannot read data from the source values channel" << std::endl;
     }
 }
 
@@ -46,7 +46,7 @@ void SecondProcessorThread(UnbufferedChannel<std::string>& processedValuesChanne
         }
     } catch (const TimeOut& ex) {
         std::lock_guard<std::mutex> lock(globalMutex);
-        std::cout << "Thread " << std::this_thread::get_id() << " cannot read data from the source values channel" << std::endl;
+        std::cout << "Thread2 " << std::this_thread::get_id() << " cannot read data from the source values channel" << std::endl;
     }
 }
 
