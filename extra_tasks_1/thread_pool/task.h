@@ -18,6 +18,7 @@
  *  то пул подождет, пока потоки разберут все оставшиеся задачи в очереди, и только после этого завершит работу потоков.
  * Если передать wait = false, то все невыполненные на момент вызова Terminate задачи, которые остались в очереди,
  *  никогда не будут выполнены.
+ * 
  * После вызова Terminate в поток нельзя добавить новые задачи.
  * Метод IsActive позволяет узнать, работает ли пул потоков. Т.е. можно ли подать ему на выполнение новые задачи.
  * Метод GetQueueSize позволяет узнать, сколько задач на данный момент ожидают своей очереди на выполнение.
@@ -26,15 +27,86 @@
  * Задачей может являться любой callable-объект, обернутый в std::function<void()>.
  */
 
+
 class ThreadPool {
 public:
-    ThreadPool(size_t threadCount) {}
+    
+           
+    ThreadPool(size_t threadCount) : active(true) {
+        for (size_t i = 0; i < threadCount; ++i) {
+            workers.emplace_back([this] {
+                WorkerThread();
+            });
+        }
+    }
 
-    void PushTask(const std::function<void()>& task) {}
+    ~ThreadPool() {
+        if (active.load()) {
+            Terminate(true);
+        }
+    }
 
-    void Terminate(bool wait) {}
+    void PushTask(const std::function<void()>& task) {
+        if (!active.load()) {
+            throw std::runtime_error("enough");
+        }
+        {
+            std::lock_guard<std::mutex> lock(qMutex);
+            tasks.emplace(task);
+        }
+        condition.notify_one();
+    }
 
-    bool IsActive() const {}
+    void Terminate(bool wait) {
+        {
+            std::lock_guard<std::mutex> lock(qMutex);
+            if (!wait) {
+                while (!tasks.empty()) {
+                    tasks.pop();
+                }
+            }
+            active = false;
+        }
+        condition.notify_all();
+        for (std::thread &worker : workers) {
+            worker.join();
+        }
+        
+    }
 
-    size_t QueueSize() const {}
+    bool IsActive() const {
+        return active.load();
+    }
+
+    size_t QueueSize() const {
+        std::lock_guard<std::mutex> lock(qMutex);
+        return tasks.size();
+    }
+
+private:
+    std::vector<std::thread> workers;
+    std::queue<std::function<void()>> tasks;
+    mutable std::mutex qMutex;
+    std::condition_variable condition;
+    std::atomic<bool> active;
+
+    void WorkerThread() {
+        while (true) {
+            std::function<void()> task;
+            {
+                std::unique_lock<std::mutex> lock(qMutex);
+                condition.wait(lock, [this] {return !active.load() || !tasks.empty();});
+                if (!active.load() && tasks.empty()) {
+                    return;
+                }
+                task = std::move(tasks.front());
+                tasks.pop();
+            }
+            task();
+        }
+    }
 };
+
+
+
+
