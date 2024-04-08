@@ -33,7 +33,7 @@ struct TorrentFile {
  */
 
 struct BencodeValue;
-using BencodeInt = int;
+using BencodeInt = int64_t;
 using BencodeString = std::string;
 using BencodeList = std::vector<std::shared_ptr<BencodeValue>>;
 using BencodeDict = std::map<BencodeString, std::shared_ptr<BencodeValue>>;
@@ -215,11 +215,8 @@ TorrentFile ConvertParsedDataToTorrentFile(const BencodeValue& data) {
         throw std::runtime_error("Pieces field is missing or not a string");
     }
 
-
-
     std::string info_content;
     EncodeBencode(info,  info_content);
-
     file.infoHash = ComputeSHA1Hash(info_content, info_content.size());
 
     return file;
