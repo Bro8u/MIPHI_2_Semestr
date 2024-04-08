@@ -55,14 +55,14 @@ BencodeInt ParseInteger(const std::string& contents, size_t& pos) {
         ++pos;
     }
     ++pos;
-    return std::stoi(res);
+    return std::stoll(res);
 }
 BencodeString ParseString(const std::string& contents, size_t& pos) {
     size_t delimiterPos = contents.find(':', pos);
     if (delimiterPos == std::string::npos) {
         throw std::runtime_error("String delimiter ':' not found");
     }
-    int lengthg = std::stoi(contents.substr(pos, delimiterPos - pos));
+    int lengthg = std::stoll(contents.substr(pos, delimiterPos - pos));
     pos = delimiterPos + 1;
     BencodeString result = contents.substr(pos, lengthg);
     pos += lengthg;
