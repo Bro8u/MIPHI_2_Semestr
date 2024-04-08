@@ -8,7 +8,7 @@
 #include <list>
 #include <map>
 #include <sstream>
-
+#include <memory>
 #include <iostream>
 
 struct TorrentFile {
