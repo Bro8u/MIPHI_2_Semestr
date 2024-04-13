@@ -267,18 +267,18 @@ public:
             binaryData = std::get<BencodeString>(*(it->second));
         }
         for (size_t i = 0; i < binaryData.size(); i += 6) {
-            // Извлечение IP-адреса
+
             std::stringstream ip;
             ip << (unsigned int)(unsigned char)binaryData[i] << '.'
                << (unsigned int)(unsigned char)binaryData[i + 1] << '.'
                << (unsigned int)(unsigned char)binaryData[i + 2] << '.'
                << (unsigned int)(unsigned char)binaryData[i + 3];
 
-            // Извлечение порта
+
             int portt = ((unsigned char)binaryData[i + 4] << 8)
                        + (unsigned char)binaryData[i + 5];
 
-            // Добавление в список пиров
+
             peers_.push_back({ip.str(), portt});
         }
     }
