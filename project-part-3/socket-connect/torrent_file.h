@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "bencode.h"
 
 struct TorrentFile {
     std::string announce;

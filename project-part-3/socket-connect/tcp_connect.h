@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 
+
 /*
  * Обертка над низкоуровневой структурой сокета.
  */
@@ -44,7 +45,7 @@ public:
      * - https://man7.org/linux/man-pages/man2/poll.2.html
      * - https://man7.org/linux/man-pages/man2/recv.2.html
      */
-    std::string ReceiveData(size_t bufferSize = 0) const;
+    std::string ReceiveData(size_t bufferrSize = 0) const;
 
     /*
      * Закрыть сокет
