@@ -8,6 +8,9 @@
 #include <map>
 #include <sstream>
 #include <openssl/sha.h>
+#include <iterator>
+#include <memory>
+#include <variant>
 
 
 namespace Bencode {
