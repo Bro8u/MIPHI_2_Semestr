@@ -4,16 +4,17 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdexcept>
-#include <cstring>
-#include <iostream>
 #include <chrono>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <vector>
 #include <fcntl.h>
 #include <sys/poll.h>
 #include <limits>
 #include <utility>
-#include <vector>
+#include <cstring>
+#include <iostream>
+
 
 TcpConnect::TcpConnect(std::string ip, int port, std::chrono::milliseconds connectTimeout, std::chrono::milliseconds readTimeout):
     ip_(ip), port_(port),connectTimeout_(connectTimeout), readTimeout_(readTimeout){}
@@ -21,11 +22,28 @@ TcpConnect::TcpConnect(std::string ip, int port, std::chrono::milliseconds conne
 TcpConnect::~TcpConnect() {}
 
 void TcpConnect::EstablishConnection() {
+    sock_ = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock_ < 0) {
+        throw std::runtime_error("Не удалось создать сокет");
+    }
+
     struct sockaddr_in serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr)); // Обнуление структуры
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port_);
-    inet_pton(AF_INET, ip_.c_str(), &serv_addr.sin_addr); // Преобразование IP адреса
-    connect(sock_, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); // Подключение к серверу
+    if (inet_pton(AF_INET, ip_.c_str(), &serv_addr.sin_addr) <= 0) {
+        throw std::runtime_error("Неверный адрес IP");
+    }
+
+
+    struct timeval tv;
+    tv.tv_sec = connectTimeout_.count() / 1000;
+    tv.tv_usec = (connectTimeout_.count() % 1000) * 1000;
+    setsockopt(sock_, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+
+    if (connect(sock_, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+        throw std::runtime_error("Не удалось установить соединение");
+    }
 }
 
 void TcpConnect::SendData(const std::string& data) const {
